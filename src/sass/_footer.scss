@@ -1,0 +1,28 @@
+// _footer.scss
+
+footer {
+  background: {
+    color: gray;
+  }
+
+  margin: {
+    top: 50px;
+  }
+
+  padding: {
+    top: 50px;
+    bottom: 50px;
+  }
+
+  color: white;
+
+  h4 {
+    margin: {
+      top: 0;
+    }
+
+    text: {
+      transform: uppercase;
+    }
+  }
+}

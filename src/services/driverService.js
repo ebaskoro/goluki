@@ -47,17 +47,26 @@ class DriverService {
    * Changes password.
    *
    * @param {number} id Driver ID.
-   * @param {string} secretHash Secret hash of the new password.
+   * @param {string} code Verification code.
+   * @param {string} password New password to set.
    * @returns {Promise}
    */
-  changePassword(id, secretHash) {
+  changePassword(id, code, password) {
     return this.createAjax({
       action: 'changePassword',
       id: id,
-      secretHash: secretHash
+      verificationCode: code,
+      newPassword: password
     });
   }
 
+  /**
+   * Logs in.
+   *
+   * @param {string} email Email address.
+   * @param {string} password Password.
+   * @returns {Promise}
+   */
   login(email, password) {
     return this.createAjax({
       action: 'login',

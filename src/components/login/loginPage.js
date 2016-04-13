@@ -4,9 +4,10 @@
  */
 
 import React from 'react';
-import AuthStore from '../stores/authStore';
 import { Grid, Row, Col, Input, Button } from 'react-bootstrap';
-import AuthActions from '../actions/authActions';
+import LoggingIn from './loggingIn';
+import AuthStore from '../../stores/authStore';
+import AuthActions from '../../actions/authActions';
 import { hashHistory } from 'react-router';
 import toastr from 'toastr';
 
@@ -55,8 +56,12 @@ class Login extends React.Component {
    *
    */
   handleChange() {
+    this.setState({
+      isLoggingIn: false
+    });
+
     if (AuthStore.isLoggedIn) {
-      //
+      hashHistory.push('/');
     }
     else {
       toastr.error('Incorrect email address and/or password.');
@@ -145,18 +150,26 @@ class Login extends React.Component {
    *
    */
   render() {
+    const isLoggingIn = this.state.isLoggingIn;
+
     return (
       <Grid>
+        <Row>
+          <Col md={12} xs={12}>
+            <h2>Log In</h2>
+          </Col>
+        </Row>
         <Row>
           <Col md={6} xs={12}>
             <Input
               type="text"
               value={this.state.email}
               onChange={this.handleEmail}
-              placeholder="enter your email address"
+              placeholder=""
               label="Email Address"
               bsSize="large"
               bsStyle={this.state.validEmail? null : 'error'}
+              disabled={isLoggingIn}
             />
           </Col>
         </Row>
@@ -166,10 +179,11 @@ class Login extends React.Component {
               type="password"
               value={this.state.password}
               onChange={this.handlePassword}
-              placeholder="enter your password"
+              placeholder=""
               label="Password"
               bsSize="large"
               bsStyle={this.state.validPassword? null : 'error'}
+              disabled={isLoggingIn}
             />
           </Col>
         </Row>
@@ -178,14 +192,17 @@ class Login extends React.Component {
             <Button
               bsStyle="primary"
               bsSize="large"
-              onClick={this.handleLogin}>
-              Log In
+              onClick={isLoggingIn? null : this.handleLogin}
+              disabled={isLoggingIn}>
+              {isLoggingIn? <LoggingIn /> : 'Log In'}
             </Button>
             &nbsp;
             <Button
+              bsStyle="link"
               bsSize="large"
-              onClick={this.handleRegister}>
-              Register
+              onClick={isLoggingIn? null : this.handleRegister}
+              disabled={isLoggingIn}>
+              register
             </Button>
           </Col>
         </Row>

@@ -177,7 +177,10 @@ class Verify extends React.Component {
               <p>Congratulations! Your email address is now verified. To continue with the registration please set your password below:</p>
             </Col>
           </Row>
-          <ChangePassword id={this.state.id} />
+          <ChangePassword
+            id={this.state.id}
+            code={this.state.code}
+          />
         </Grid>
       )
     }
@@ -197,7 +200,7 @@ class Verify extends React.Component {
                 type="text"
                 value={this.state.email}
                 onChange={this.handleEmail}
-                placeholder="enter your email address"
+                placeholder=""
                 label="Email Address"
                 bsSize="large"
                 bsStyle={this.state.validEmail? null : 'error'}
@@ -211,7 +214,7 @@ class Verify extends React.Component {
                 type="text"
                 value={this.state.code}
                 onChange={this.handleCode}
-                placeholder="enter verification code"
+                placeholder=""
                 label="Verification Code"
                 bsSize="large"
                 bsStyle={this.state.validCode? null : 'error'}

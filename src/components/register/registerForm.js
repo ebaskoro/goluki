@@ -4,8 +4,9 @@
  */
 
 import React from 'react';
-import AuthStore from '../../stores/authStore';
 import { Grid, Row, Col, Input, Button } from 'react-bootstrap';
+import Registering from './registering';
+import AuthStore from '../../stores/authStore';
 import AuthActions from '../../actions/authActions';
 import toastr from 'toastr';
 
@@ -35,6 +36,7 @@ class Form extends React.Component {
     this.handleFullName = this.handleFullName.bind(this);
     this.handleEmail = this.handleEmail.bind(this);
     this.handleClick = this.handleClick.bind(this);
+    this.handleReset = this.handleReset.bind(this);
 
     this.handleChange = this.handleChange.bind(this);
     AuthStore.addChangeListener(this.handleChange);
@@ -142,6 +144,17 @@ class Form extends React.Component {
   }
 
   /**
+   * Handles reset button clicked event.
+   *
+   */
+  handleReset() {
+    this.setState({
+      fullName: '',
+      email: ''
+    });
+  }
+
+  /**
    * Renders the component.
    *
    */
@@ -161,10 +174,11 @@ class Form extends React.Component {
               type="text"
               value={this.state.fullName}
               onChange={this.handleFullName}
-              placeholder="enter your full name"
+              placeholder=""
               label="Full Name"
               bsSize="large"
               bsStyle={this.state.validFullName? null : 'error'}
+              disabled={isRegistering}
             />
           </Col>
         </Row>
@@ -174,10 +188,11 @@ class Form extends React.Component {
               type="text"
               value={this.state.email}
               onChange={this.handleEmail}
-              placeholder="enter your email address"
+              placeholder=""
               label="Email Address"
               bsSize="large"
               bsStyle={this.state.validEmail? null : 'error'}
+              disabled={isRegistering}
             />
           </Col>
         </Row>
@@ -190,6 +205,13 @@ class Form extends React.Component {
               disabled={isRegistering}>
               {isRegistering? <Registering /> : 'Register'}
             </Button>
+            <Button
+              bsStyle="link"
+              bsSize="large"
+              onClick={isRegistering? null : this.handleReset}
+              disabled={isRegistering}>
+              reset
+            </Button>
           </Col>
         </Row>
       </Grid>
@@ -199,25 +221,3 @@ class Form extends React.Component {
 }
 
 export default Form;
-
-import FontAwesome from 'react-fontawesome';
-
-/**
- * Registering component.
- *
- */
-class Registering extends React.Component {
-
-  /**
-   * Renders the component.
-   *
-   */
-  render() {
-   return (
-     <div>
-       Registering <FontAwesome name="spinner" spin size="lg" />
-     </div>
-   );
-  }
-
-}

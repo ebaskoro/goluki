@@ -17,7 +17,8 @@ import toastr from 'toastr';
 class ChangePassword extends React.Component {
 
   static PropTypes = {
-    id: React.PropTypes.number.isRequired
+    id: React.PropTypes.number.isRequired,
+    code: React.PropTypes.string.isRequired
   }
 
   /**
@@ -31,6 +32,7 @@ class ChangePassword extends React.Component {
 
     this.state = {
       id: props.id,
+      code: props.code,
       password: '',
       validPassword: true,
       isChanging: false
@@ -109,7 +111,8 @@ class ChangePassword extends React.Component {
         isChanging: true
       });
       const id = this.state.id;
-      AuthActions.changePassword(id, password);
+      const code = this.state.code;
+      AuthActions.changePassword(id, code, password);
     }
   }
 

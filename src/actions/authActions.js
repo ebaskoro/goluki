@@ -130,10 +130,11 @@ class AuthActions {
    * Changes password.
    *
    * @param {number} id Driver ID.
-   * @param {string} secretHash Secret hash of the new password.
+   * @param {string} code Verification code.
+   * @param {string} password Password.
    */
-  changePassword(id, secretHash) {
-    this._service.changePassword(id, secretHash)
+  changePassword(id, code, password) {
+    this._service.changePassword(id, code, password)
       .then(response => {
         switch (response.resultCode) {
           case RESULT_SUCCESS:
@@ -168,14 +169,34 @@ class AuthActions {
    * @param {string} password Password.
    */
   login(email, password) {
-    this._service.login(email, password).then(function (response) {
-      if (response.resultCode === 0) {
-        this._service.dispatch({
+    this._service.login(email, password)
+      .then(response => {
+        switch (response.resultCode) {
+          case RESULT_SUCCESS:
+            this._dispatcher.dispatch({
+              actionType: ActionTypes.LOG_IN,
+              isLoggedIn: true,
+              token: response.token,
+              expiry: response.expiry
+            });
+            break;
+
+          default:
+            this._dispatcher.dispatch({
+              actionType: ActionTypes.LOG_IN,
+              isLoggedIn: false
+            });
+            break;
+        }
+      })
+      .fail(() => {
+        this._dispatcher.dispatch({
           actionType: ActionTypes.LOG_IN,
-          authToken: response.authToken
-        })
-      }
-    })
+          isLoggedIn: false,
+          hasError: true
+        });
+      })
+    ;
   }
 
 }

@@ -7,7 +7,7 @@ import React from 'react';
 import { Router, Route, hashHistory, IndexRoute } from 'react-router';
 import App from './components/app';
 import Home from './components/homePage';
-import Login from './components/loginPage';
+import Login from './components/login/loginPage';
 import Register from './components/register/registerPage';
 import Verify from './components/verify/verifyPage';
 import Orders from './components/orders/orderPage';

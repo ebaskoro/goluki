@@ -8,12 +8,20 @@ import OrderStore from '../../stores/orderStore';
 import OrderPanels from './orderPanels';
 import { Grid, Button } from 'react-bootstrap';
 import OrderActions from '../../actions/orderActions';
+import AuthStore from '../../stores/authStore';
+import { hashHistory } from 'react-router';
 
 /**
  * Order page component.
  *
  */
 class Order extends React.Component {
+
+  static willTransitionTo(transition) {
+    if (!AuthStore.isLoggedIn) {
+      transition.redirect('/login');
+    }
+  }
 
   /**
    * Creates an order page.
@@ -41,6 +49,12 @@ class Order extends React.Component {
    */
   componentWillUnmount() {
     OrderStore.removeChangeListener(this.handleChange);
+  }
+
+  componentDidMount() {
+    if (!AuthStore.isLoggedIn) {
+      hashHistory.push('/login');
+    }
   }
 
   /**

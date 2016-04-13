@@ -22,6 +22,8 @@ class AuthStore extends BaseStore {
 
     this._id = 0;
     this._loggedIn = false;
+    this._token = null;
+    this._expiry = null;
     this._registered = false;
     this._emailTaken = false;
     this._verified = false;
@@ -117,7 +119,9 @@ class AuthStore extends BaseStore {
         break;
 
       case ActionTypes.LOG_IN:
-        this._loggedIn = true;
+        this._loggedIn = action.isLoggedIn;
+        this._token = action.token;
+        this._expiry = action.expiry;
         this.emitChange();
         break;
 

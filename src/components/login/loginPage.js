@@ -197,13 +197,15 @@ class Login extends React.Component {
               {isLoggingIn? <LoggingIn /> : 'Log In'}
             </Button>
             &nbsp;
-            <Button
-              bsStyle="link"
-              bsSize="large"
-              onClick={isLoggingIn? null : this.handleRegister}
-              disabled={isLoggingIn}>
-              register
-            </Button>
+            {isLoggingIn? '' : (
+              <Button
+                bsStyle="link"
+                bsSize="large"
+                onClick={isLoggingIn? null : this.handleRegister}
+                disabled={isLoggingIn}>
+                register
+              </Button>
+            )}
           </Col>
         </Row>
       </Grid>

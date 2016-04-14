@@ -4,24 +4,18 @@
  */
 
 import React from 'react';
+import AuthenticatedComponent from '../authenticatedComponent';
+import { Grid, Button } from 'react-bootstrap';
+import Refreshing from './refreshing';
 import OrderStore from '../../stores/orderStore';
 import OrderPanels from './orderPanels';
-import { Grid, Button } from 'react-bootstrap';
 import OrderActions from '../../actions/orderActions';
-import AuthStore from '../../stores/authStore';
-import { hashHistory } from 'react-router';
 
 /**
  * Order page component.
  *
  */
-class Order extends React.Component {
-
-  static willTransitionTo(transition) {
-    if (!AuthStore.isLoggedIn) {
-      transition.redirect('/login');
-    }
-  }
+class Order extends AuthenticatedComponent {
 
   /**
    * Creates an order page.
@@ -30,12 +24,10 @@ class Order extends React.Component {
    * @param props Properties.
    */
   constructor(props) {
-    super(props);
-
-    this.state = {
-      orders: OrderStore.getAllOrders(),
-      isSearching: false
-    };
+    super(props, {
+      orders: [],
+      isRefreshing: false
+    });
 
     this.handleSearch = this.handleSearch.bind(this);
 
@@ -48,13 +40,9 @@ class Order extends React.Component {
    *
    */
   componentWillUnmount() {
-    OrderStore.removeChangeListener(this.handleChange);
-  }
+    super.componentWillUnmount();
 
-  componentDidMount() {
-    if (!AuthStore.isLoggedIn) {
-      hashHistory.push('/login');
-    }
+    OrderStore.removeChangeListener(this.handleChange);
   }
 
   /**
@@ -64,7 +52,7 @@ class Order extends React.Component {
   handleChange() {
     this.setState({
       orders: OrderStore.getAllOrders(),
-      isSearching: false
+      isRefreshing: false
     });
   }
 
@@ -74,9 +62,9 @@ class Order extends React.Component {
    */
   handleSearch() {
     this.setState({
-      isSearching: true
+      isRefreshing: true
     });
-    OrderActions.search();
+    OrderActions.search(this.state.token);
   }
 
   /**
@@ -84,7 +72,7 @@ class Order extends React.Component {
    *
    */
   render() {
-    const isSearching = this.state.isSearching;
+    const isRefreshing = this.state.isRefreshing;
     const orders = this.state.orders;
 
     return (
@@ -94,12 +82,12 @@ class Order extends React.Component {
           <Button
             bsStyle="primary"
             bsSize="large"
-            onClick={isSearching? null : this.handleSearch}
-            disabled={isSearching}>
-            {isSearching? <Searching /> : 'Refresh'}
+            onClick={isRefreshing? null : this.handleSearch}
+            disabled={isRefreshing}>
+            {isRefreshing? <Refreshing /> : 'Refresh'}
           </Button>
         </p>
-        {isSearching? '' : <OrderPanels orders={orders} />}
+        {isRefreshing? '' : <OrderPanels orders={orders} />}
       </Grid>
     );
   }
@@ -107,25 +95,3 @@ class Order extends React.Component {
 }
 
 export default Order;
-
-import FontAwesome from 'react-fontawesome';
-
-/**
- * Searching component.
- *
- */
-class Searching extends React.Component {
-
-  /**
-   * Renders the component.
-   *
-   */
-  render() {
-    return (
-      <div>
-        Refreshing <FontAwesome name="spinner" spin size="lg" />
-      </div>
-    );
-  }
-
-}

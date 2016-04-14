@@ -53,6 +53,15 @@ class AuthStore extends BaseStore {
   }
 
   /**
+   * Gets the session token.
+   *
+   * @returns {string} Session token or null if not currently logged in.
+   */
+  get token() {
+    return this._token;
+  }
+
+  /**
    * Checks whether the driver has successfully been registered or not.
    *
    * @returns {boolean} True when driver has been registered successfully or false otherwise.

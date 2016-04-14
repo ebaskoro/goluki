@@ -3,26 +3,63 @@
  *
  */
 
-import Dispatcher from '../dispatcher/appDispatcher'
-import ActionTypes from '../constants/actionTypes'
-import OrderApi from '../services/orderApi'
+import ActionTypes from '../constants/actionTypes';
 
-export default {
+const RESULT_SUCCESS = 0;
+const RESULT_NOT_FOUND = -4;
+const RESULT_INVALID_ACTION = -98;
+const RESULT_GENERAL_ERROR = -99;
+
+/**
+ * Order actions.
+ *
+ */
+class OrderActions {
+
+  /**
+   * Creates order actions.
+   *
+   * @constructs
+   * @param service Order service to use.
+   * @param dispatcher Dispatcher to use.
+   */
+  constructor(service, dispatcher) {
+    this._service = service;
+    this._dispatcher = dispatcher;
+  }
 
   /**
    * Searches for all orders.
    *
+   * @param {string} token Session token to use.
    */
-  search() {
-    OrderApi.getAllOrders().then(function (response) {
-      if (response.resultCode === 0) {
-        Dispatcher.dispatch({
+  search(token) {
+    this._service.getAllOrders(token)
+      .then(response => {
+        switch (response.resultCode) {
+          case RESULT_SUCCESS:
+            this._dispatcher.dispatch({
+              actionType: ActionTypes.GET_ORDERS,
+              orders: response.deliveries
+            });
+            break;
+
+          default:
+            this._dispatcher.dispatch({
+              actionType: ActionTypes.LOG_IN,
+              isLoggedIn: false
+            });
+            break;
+        }
+      })
+      .fail(() => {
+        this._dispatcher.dispatch({
           actionType: ActionTypes.GET_ORDERS,
-          orders: response.deliveries
-        })
-      }
-    })
-  },
+          hasError: true
+        });
+      })
+    ;
+  }
 
   /**
    * Takes an order.
@@ -31,14 +68,18 @@ export default {
    * @param driver Driver taking the order.
    */
   take(order, driver) {
-    OrderApi.takeOrder(order.id, driver.id).then(function (response) {
+    this._service.takeOrder(order.id, driver.id).then(response => {
       if (response.resultCode === 0) {
-        Dispatcher.dispatch({
+        this._dispatcher.dispatch({
           actionType: ActionTypes.TAKE_ORDER,
           takenOrder: order
-        })
+        });
       }
-    })
+    });
   }
 
 }
+
+import OrderService from '../services/orderService';
+import Dispatcher from '../dispatcher/appDispatcher';
+export default new OrderActions(OrderService, Dispatcher);

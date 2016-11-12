@@ -36,6 +36,7 @@ class Login extends React.Component {
 
     this.handleEmail = this.handleEmail.bind(this);
     this.handlePassword = this.handlePassword.bind(this);
+    this.handleKeyPress = this.handleKeyPress.bind(this);
     this.handleLogin = this.handleLogin.bind(this);
     this.handleRegister = this.handleRegister.bind(this);
 
@@ -88,6 +89,17 @@ class Login extends React.Component {
     this.setState({
       password: event.target.value
     });
+  }
+
+  /**
+   * Handles key press event.
+   *
+   * @param event Key press event.
+   */
+  handleKeyPress(event) {
+    if (event.charCode === 13) {
+      this.handleLogin(event);
+    }
   }
 
   /**
@@ -165,6 +177,7 @@ class Login extends React.Component {
               type="text"
               value={this.state.email}
               onChange={this.handleEmail}
+              onKeyPress={this.handleKeyPress}
               placeholder=""
               label="Email Address"
               bsSize="large"
@@ -179,6 +192,7 @@ class Login extends React.Component {
               type="password"
               value={this.state.password}
               onChange={this.handlePassword}
+              onKeyPress={this.handleKeyPress}
               placeholder=""
               label="Password"
               bsSize="large"

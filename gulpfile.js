@@ -32,11 +32,17 @@ var config = {
 
 var gulp = require('gulp');
 
+var del = require('del');
+gulp.task('clean', function () {
+  del([
+    'build'
+  ]);
+});
+
 var connect = require('gulp-connect');
 gulp.task('html', function () {
   gulp.src(config.paths.html)
-    .pipe(gulp.dest(config.paths.build))
-    .pipe(connect.reload());
+    .pipe(gulp.dest(config.paths.build));
 });
 
 gulp.task('images', function () {
@@ -46,20 +52,27 @@ gulp.task('images', function () {
 
 var sass = require('gulp-sass');
 gulp.task('sass', function () {
-  gulp.src(config.paths.sass)
+  return gulp.src(config.paths.sass)
     .pipe(sass().on('error', sass.logError))
-    .pipe(gulp.dest(config.paths.build + '/css'))
-    .pipe(connect.reload());
+    .pipe(gulp.dest(config.paths.build + '/css'));
 });
 
 var concat = require('gulp-concat');
+var buffer = require('gulp-buffer');
+var rev = require('gulp-rev');
 gulp.task('css', [
   'sass'
-], function () {
-  gulp.src(config.paths.css)
-    .pipe(concat('index.min.css'))
+],function () {
+  return gulp.src(config.paths.css)
+    .pipe(concat('index.css'))
+    .pipe(buffer())
+    .pipe(rev())
     .pipe(gulp.dest(config.paths.build + '/css'))
-    .pipe(connect.reload());
+    .pipe(rev.manifest(config.paths.build + '/rev-manifest.json', {
+      base: config.paths.build,
+      merge: true
+    }))
+    .pipe(gulp.dest(config.paths.build));
 });
 
 gulp.task('font', function () {
@@ -71,7 +84,7 @@ var browserify = require('browserify');
 var babelify = require('babelify');
 var source = require('vinyl-source-stream');
 gulp.task('js', function () {
-  browserify(config.paths.mainJs)
+  return browserify(config.paths.mainJs)
     .transform(babelify, {
       presets: [
         'react',
@@ -82,12 +95,32 @@ gulp.task('js', function () {
     .bundle()
     .on('error', console.error.bind(console))
     .pipe(source('index.js'))
+    .pipe(buffer())
+    .pipe(rev())
     .pipe(gulp.dest(config.paths.build + '/js'))
+    .pipe(rev.manifest(config.paths.build + '/rev-manifest.json', {
+      base: config.paths.build,
+      merge: true
+    }))
+    .pipe(gulp.dest(config.paths.build));
+});
+
+var revReplace = require('gulp-rev-replace');
+gulp.task('replace', [
+  'css',
+  'js'
+], function () {
+  var manifest = gulp.src(config.paths.build + '/rev-manifest.json');
+  return gulp.src(config.paths.build + '/index.html')
+    .pipe(revReplace({
+      manifest: manifest
+    }))
+    .pipe(gulp.dest(config.paths.build))
     .pipe(connect.reload());
 });
 
 gulp.task('connect', function () {
-  connect.server({
+  return connect.server({
     root: [
       config.paths.build
     ],
@@ -101,7 +134,7 @@ var open = require('gulp-open');
 gulp.task('open', [
   'connect'
 ], function () {
-  gulp.src(config.paths.build + '/index.html')
+  return gulp.src(config.paths.build + '/index.html')
     .pipe(open({
       uri: config.devBaseUrl + ':' + config.port + '/'
     }));
@@ -126,19 +159,23 @@ gulp.task('watch', function () {
     'html'
   ]);
   gulp.watch(config.paths.sass, [
-    'css'
+    'replace'
   ]);
   gulp.watch(config.paths.js, [
-    'js'
+    'replace'
   ]);
 });
 
-gulp.task('default', [
+gulp.task('build', [
   'html',
   'images',
-  'css',
   'font',
-  'js',
+  'replace'
+]);
+
+gulp.task('default', [
+  'clean',
+  'build',
   'open',
   'watch'
 ]);

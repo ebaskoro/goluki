@@ -205,13 +205,16 @@ class Form extends React.Component {
               disabled={isRegistering}>
               {isRegistering? <Registering /> : 'Register'}
             </Button>
-            <Button
-              bsStyle="link"
-              bsSize="large"
-              onClick={isRegistering? null : this.handleReset}
-              disabled={isRegistering}>
-              reset
-            </Button>
+            &nbsp;
+            {isRegistering? '' : (
+              <Button
+                bsStyle="link"
+                bsSize="large"
+                onClick={isRegistering? null : this.handleReset}
+                disabled={isRegistering}>
+                reset
+              </Button>
+            )}
           </Col>
         </Row>
       </Grid>

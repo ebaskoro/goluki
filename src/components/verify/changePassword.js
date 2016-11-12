@@ -128,7 +128,7 @@ class ChangePassword extends React.Component {
         <Row>
           <Col md={8} xs={12}>
             <Input
-              type="text"
+              type="password"
               value={this.state.password}
               onChange={this.handlePassword}
               label="New Password"

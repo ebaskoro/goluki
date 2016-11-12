@@ -24,6 +24,7 @@ class AuthStore extends BaseStore {
     this._loggedIn = false;
     this._token = null;
     this._expiry = null;
+    this._profile = null;
     this._registered = false;
     this._emailTaken = false;
     this._verified = false;
@@ -59,6 +60,15 @@ class AuthStore extends BaseStore {
    */
   get token() {
     return this._token;
+  }
+
+  /**
+   * Gets the currently logged in driver's profile.
+   *
+   * @returns Profile or null if not currently logged in.
+   */
+  get profile() {
+    return this._profile;
   }
 
   /**
@@ -131,6 +141,7 @@ class AuthStore extends BaseStore {
         this._loggedIn = action.isLoggedIn;
         this._token = action.token;
         this._expiry = action.expiry;
+        this._profile = action.profile;
         this.emitChange();
         break;
 

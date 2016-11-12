@@ -177,7 +177,13 @@ class AuthActions {
               actionType: ActionTypes.LOG_IN,
               isLoggedIn: true,
               token: response.token,
-              expiry: response.expiry
+              expiry: response.expiry,
+              profile: {
+                emailAddress: response.emailAddress,
+                fullName: response.fullName,
+                nickName: response.nickName,
+                registered: response.registered
+              }
             });
             break;
 

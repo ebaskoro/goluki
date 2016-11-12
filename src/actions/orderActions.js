@@ -68,14 +68,18 @@ class OrderActions {
    * @param driver Driver taking the order.
    */
   take(order, driver) {
-    this._service.takeOrder(order.id, driver.id).then(response => {
-      if (response.resultCode === 0) {
-        this._dispatcher.dispatch({
-          actionType: ActionTypes.TAKE_ORDER,
-          takenOrder: order
-        });
-      }
-    });
+    this._service.takeOrder(order.id, driver.id)
+      .then(response => {
+        switch (response.resultCode) {
+          default:
+            this._dispatcher.dispatch({
+              actionType: ActionTypes.TAKE_ORDER,
+              takenOrder: order
+            });
+            break;
+        }
+      })
+    ;
   }
 
 }

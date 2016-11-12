@@ -4,7 +4,7 @@
  */
 
 import React from 'react';
-import { Navbar, fixedTop, Nav, NavItem } from 'react-bootstrap';
+import { Navbar, fixedTop, Nav, NavItem, pullRight } from 'react-bootstrap';
 import { Link, hashHistory } from 'react-router';
 import AuthStore from '../../stores/authStore';
 
@@ -24,7 +24,8 @@ class Header extends React.Component {
     super(props);
 
     this.state = {
-      isLoggedIn: AuthStore.isLoggedIn
+      isLoggedIn: AuthStore.isLoggedIn,
+      profile: AuthStore.profile
     };
 
     this.handleClick = this.handleClick.bind(this);
@@ -47,7 +48,8 @@ class Header extends React.Component {
    */
   handleChange() {
     this.setState({
-      isLoggedIn: AuthStore.isLoggedIn
+      isLoggedIn: AuthStore.isLoggedIn,
+      profile: AuthStore.profile
     });
   }
 
@@ -75,8 +77,16 @@ class Header extends React.Component {
               <img src="images/logo.jpg" />
             </Link>
           </Navbar.Brand>
+          <Navbar.Text>
+            GOluki
+          </Navbar.Text>
         </Navbar.Header>
         <Navbar.Collapse>
+          {isLoggedIn? (
+            <Navbar.Text pullRight>
+              Hi {this.state.profile.nickName}!
+            </Navbar.Text>
+          ) : ''}
           {isLoggedIn? (
             <Nav>
               <NavItem onClick={isLoggedIn? this.handleClick : null}>
